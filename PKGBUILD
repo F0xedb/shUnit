@@ -1,6 +1,6 @@
 # Maintainer: Tom Meyers tom@pbfp.team
 pkgname=shunit
-pkgver=r18.0ccf95
+pkgver=r31.6a774f4
 pkgrel=1
 pkgdesc="A basic unit testing framework for bash"
 arch=(any)
