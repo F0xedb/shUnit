@@ -1,9 +1,12 @@
 #!/bin/bash
+shopt -s globstar
 
 function iterate {
-    for unit in $(find . -iname '*.shUnit'); do
-        echo "$unit"        
-    done
+    for unit in **/*.shUnit; do
+        if [[ -f "$unit" ]]; then
+           echo "$unit"
+        fi
+    done 
 }
 
 
