@@ -123,25 +123,31 @@ Here are some simple examples
 ```bash
 # Assertion examples
 
+# special functions
+# ran once on startup
+function setup {
+touch a
+    cat <<EOF > b
+    b
+EOF
+}
+# runs after all tests are completed
+function destroy {
+    rm a b
+}
+
+# unit tests
 function Test_exists {
     file="$HOME/h"
     AssertExists "$file" # file doesn't exist so this test fails
 }
 function Test_content {
-    touch a
-    cat <<EOF > b
-    b
-EOF
     AssertFileEquals "a" "b" # the content is not the same so the test failes
 }
 function Test_equals {
     AssertEquals "a" "a" # the strings are the same so the test passes
 }
 function Test_filecontains {
-  touch a
-  cat <<EOF > b
-  b
-EOF
     AssertFileContains "b" "a" # file b contains data in file a so a pass
     AssertFileContains "a" "b" # file a contains nothing so it doesn't contain the data in b => test failed
 }

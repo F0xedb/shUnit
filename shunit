@@ -4,6 +4,8 @@
 # Contact email- tom@pbfp.team
 # Contact github - F0xedb
 
+version="v0.1.0"
+
 # color information
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -105,6 +107,9 @@ if [[ "$1" == "-r" ]]; then
         run-unit "$0" "$2"
 elif [[ "$1" == "-f" ]]; then
         run-function "$2" "$3"
+elif [[ "$1" == "-v" ]]; then
+        echo $version
+        exit 0
 else
         iterate "$0"
 fi
