@@ -1,0 +1,10 @@
+#!/bin/bash
+
+function iterate {
+    for unit in $(find . -iname '*.shUnit'); do
+        echo "$unit"        
+    done
+}
+
+
+iterate
