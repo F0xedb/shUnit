@@ -1,10 +1,23 @@
 #!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;35m'
+NC='\033[0m' # No Color
+
+
 shopt -s globstar
+
+function run-unit {
+    desc=$(head -n1 "$1" | sed 's:^#::')
+    echo -e "$BLUE$desc$NC"
+}
 
 function iterate {
     for unit in **/*.shUnit; do
         if [[ -f "$unit" ]]; then
-           echo "$unit"
+           echo -e "$BLUE Running unit: $NC$unit"
+           run-unit $unit
         fi
     done 
 }
