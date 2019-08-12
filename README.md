@@ -64,25 +64,33 @@ All you need is a compatible shell eg bash
 
 ### Installation
  
-1. Clone the shUnit
+1. Clone the shUnit repo
 ```sh
 git clone https:://github.com/F0xedb/shUnit.git
 ```
 
-copy shUnit and assert.sh to your path.
+copy shunit and assert.sh to your path.
 eg
 
 ```bash
-cp shUnit /usr/bin/shUnit
+cp shunit /usr/bin/shunit
 cp assert.sh /usr/bin/assert.sh
+```
+
+Arch user can do the following
+
+```bash
+yay -Syu shunit
+# or manually
+makepkg -si
 ```
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Running `shUnit` is relatively simple `cd` into the root directory of the project and run `shUnit`
-shUnit will run all files ending with `.shunit`
+Running `shunit` is relatively simple `cd` into the root directory of the project and run `shunit`
+shunit will run all files ending with `.shunit`
 
 Here is a basic unit test file
 ```bash
@@ -102,7 +110,7 @@ function Test_Fail {
 The runner outputs the following
 
 ```bash
-$ shUnit
+$ shunit
 > Running unit test : unit test showcase
 > Pass: Test_AequalsA
 > Error: Test_Fail failed - expected a got b
