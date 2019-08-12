@@ -1,14 +1,25 @@
 #!/bin/bash
 
+# Build and maintained by Tom Meyers
+# Contact email- tom@pbfp.team
+# Contact github - F0xedb
+
+# color information
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;35m'
 NC='\033[0m' # No Color
+
+# location of the assert file
+name=$(basename "$0")
+directory=$(printf "%s" "$0" | sed "s:$name::")
+source "$directory"assert.sh
+
+# special settings
+shopt -s globstar
 trap "destroyTest && destory" SIGHUP
 
-source assert.sh
-shopt -s globstar
-
+# default behaviour of special functions
 function setup {
     return 0
 }
