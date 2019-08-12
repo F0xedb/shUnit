@@ -148,7 +148,9 @@ EOF
 
 function Test_assert {
     if [[ "a" != "b" ]]; then
-        assert "A does not equal b" # just errors when this is called
+        # The 1 indicates that the assert is an error
+        # 0 would indicate a success and generate a Pass: check
+        assert "1" "A does not equal b" # just errors when this is called
     fi
 }
 
@@ -165,7 +167,7 @@ Optionally we have "special" functions for helping your unit tests
 * `destroyTest` # called after each function
 
 > These function don't need to be used, but are usefull to clean up the test suite
-_For more examples, please refer to the [Documentation](https://www.github.com/F0xedb/shUnit/wkik)_
+_For more examples, please refer to the [Documentation](https://www.github.com/F0xedb/shUnit/wiki)_
 
 
 
