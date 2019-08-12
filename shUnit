@@ -23,7 +23,7 @@ function destroyTest {
 
 # execute all test in a single unit $1 is the units file name
 function execute-test {
-        func=$(grep "function.*{" "$1" | sed 's:function ::' | sed 's: {::' | sed -r 's:^setup$|^destroy$|^setupTest$|^destroyTest$::')
+        func=$(grep "function Test.*{" "$1" | sed 's:function ::' | sed 's: {::')
         for unitTest in $func; do
                 echo -e "$BLUE Running test: $unitTest $NC"
                 setupTest

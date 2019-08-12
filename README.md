@@ -87,23 +87,25 @@ shUnit will run all files ending with `.shunit`
 Here is a basic unit test file
 ```bash
 # unit test showcase
-function AequalsA {
+function Test_AequalsA {
     AssertEqual "a" "a" # no problem
     AssertContains "abcdefg" "def"  # no problem
 }
 
-function FailTest {
+function Test_Fail {
     AssertEquals "a" "b" # error a != b
 }
 ```
+
+> The functions using assert should be prefixed with Test. Only these function will be ran by the unit test runner. Any other function (except for special functions) are helper functions you can use.
 
 The runner outputs the following
 
 ```bash
 $ shUnit
 > Running unit test : unit test showcase
-> Pass: AequalsA
-> Error: FailTest failed - expected a got b
+> Pass: Test_AequalsA
+> Error: Test_Fail failed - expected a got b
 > unit test failed: Pass: 1 Error: 1
 ```
 
@@ -121,21 +123,21 @@ Here are some simple examples
 ```bash
 # Assertion examples
 
-function exists {
+function Test_exists {
     file="$HOME/h"
     AssertExists "$file" # file doesn't exist so this test fails
 }
-function content {
+function Test_content {
     touch a
     cat <<EOF > b
     b
 EOF
     AssertFileEquals "a" "b" # the content is not the same so the test failes
 }
-function equals {
+function Test_equals {
     AssertEquals "a" "a" # the strings are the same so the test passes
 }
-function filecontains {
+function Test_filecontains {
   touch a
   cat <<EOF > b
   b
@@ -144,13 +146,13 @@ EOF
     AssertFileContains "a" "b" # file a contains nothing so it doesn't contain the data in b => test failed
 }
 
-function assert {
+function Test_assert {
     if [[ "a" != "b" ]]; then
         assert "A does not equal b" # just errors when this is called
     fi
 }
 
-function assert_true {
+function Test_assert_true {
     assertTrue [[ "a" != "b" ]] # this is the same as the assert function
 }
 ```
