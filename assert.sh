@@ -72,7 +72,7 @@ function AssertExists {
 
 function AssertTrue {
     success=0
-    eval $@ && success=1
+    eval "$@" && success=1
     if [[ "$success" == "1" ]]; then
         echo -e "${GREEN}PASS${NC}: $@ evaluated to true"
         addStats "pass" "Pass: $@ evaluated to true"
