@@ -1,0 +1,5 @@
+# a second unit test
+
+function test3 {
+    echo "In test 3"    
+}
