@@ -17,7 +17,7 @@ function iterate {
     for unit in **/*.shUnit; do
         if [[ -f "$unit" ]]; then
            echo -e "$BLUE Running unit: $NC$unit"
-           run-unit $unit
+           run-unit "$unit"
         fi
     done 
 }
