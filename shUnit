@@ -8,19 +8,62 @@ NC='\033[0m' # No Color
 
 shopt -s globstar
 
-function run-unit {
-    desc=$(head -n1 "$1" | sed 's:^#::')
-    echo -e "$BLUE$desc$NC"
+function setup {
+    return
+}
+function destroy {
+    return
+}
+function setupTest {
+    return
+}
+function destroyTest {
+    return
 }
 
+# execute all test in a single unit $1 is the units file name
+function execute-test {
+        func=$(grep "function.*{" "$1" | sed 's:function ::' | sed 's: {::' | sed -r 's:^setup$|^destroy$|^setupTest$|^destroyTest$::')
+        for unitTest in $func; do
+                echo -e "$BLUE Running test: $unitTest $NC"
+                setupTest
+                "$unitTest"
+                destroyTest
+        done
+}
+
+# $1 is the file
+function run-unit {
+    # get the file comment
+    desc=$(head -n1 "$1" | sed 's:^#::')
+    # print out the file comment
+    echo -e "$BLUE$desc$NC"
+    # load in the file
+    source "$1"
+    # perform initial setup
+    setup
+    
+    execute-test "$1"
+
+    # perform destruction
+    destroy
+}
+
+# $1 is the path to shUnit
 function iterate {
     for unit in **/*.shUnit; do
         if [[ -f "$unit" ]]; then
            echo -e "$BLUE Running unit: $NC$unit"
-           run-unit "$unit"
+           "$1" -r "$unit"
+           echo -e "$BLUE--------------------------------------------------------$NC"
         fi
     done 
 }
 
 
-iterate
+if [[ "$1" == "-r" ]]; then
+        run-unit "$2"
+else
+        iterate "$0"
+fi
+
