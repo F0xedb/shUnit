@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Build and maintained by Tom Meyers
-# Contact email- tom@pbfp.team
+# Contact email- tom@odex.be
 # Contact github - F0xedb
 
-version="v0.1.0"
+version="v0.1.1"
 
 # color information
 RED='\033[0;31m'
@@ -21,96 +21,116 @@ source "$directory"assert.sh
 shopt -s globstar
 trap "destroyTest && destory" SIGHUP
 
+# Help info
+
+function help() {
+	printf "${BLUE}%s${NC} options -> -h | -v | .sh\n" "$name"
+	printf "${BLUE}USAGE:${NC}\n"
+	printf "%s -v \t\t\t\tPrint the current version\n" "$name"
+	printf "%s (-h --help) \t\t\tPrint this help menu\n" "$name"
+	printf "%s <shell script> \t\t\tSource a shell script before and after all tests have ran. function start and stop will be called. \n" "$name"
+
+}
+
 # default behaviour of special functions
-function setup {
-    return 0
+function setup() {
+	return 0
 }
-function destroy {
-    return 0
+function destroy() {
+	return 0
 }
-function setupTest {
-    return 0
+function setupTest() {
+	return 0
 }
-function destroyTest {
-    return 0
+function destroyTest() {
+	return 0
+}
+function start() {
+	return 0
+}
+function stop() {
+	return 0
 }
 
 # $1 is the unit filename
 # $2 is the function name
-function run-function {
-                source "$1"
-                echo -e "$BLUE Running test: $2 $NC"
-                setupTest || echo -e "${RED}Error: running setupTest${NC}"
+function run-function() {
+	source "$1"
+	echo -e "$BLUE Running test: $2 $NC"
+	setupTest || echo -e "${RED}Error: running setupTest${NC}"
 
-                "$2"
+	"$2"
 
-                destroyTest || echo -e "${RED}Error: running destroyTest${NC}"
+	destroyTest || echo -e "${RED}Error: running destroyTest${NC}"
 }
 
 # execute all test in a single unit $1 is the shUnit filename $2 is the units file name
-function execute-test {
-        func=$(grep "function Test.*{" "$2" | sed 's:function ::' | sed 's: {::')
-        for unitTest in $func; do
-                "$1" -f "$2" "$unitTest"
-        done
+function execute-test() {
+	func=$(grep "function Test.*{" "$2" | sed 's:function ::' | sed 's: {::')
+	for unitTest in $func; do
+		"$1" -f "$2" "$unitTest"
+	done
 }
 
 # $1 is the shUnit
 # $2 is the unitfile to be ran
-function run-unit {
-    # get the file comment
-    desc=$(head -n1 "$2" | sed 's:^#::')
-    # print out the file comment
-    echo -e "$BLUE$desc$NC"
-    # load in the file
-    source "$2"
-    # perform initial setup
-    setup || echo -e "${RED}Error: running setup${NC}"
-    
-    execute-test "$1" "$2"
+function run-unit() {
+	# get the file comment
+	desc=$(head -n1 "$2" | sed 's:^#::')
+	# print out the file comment
+	echo -e "$BLUE$desc$NC"
+	# load in the file
+	source "$2"
+	# perform initial setup
+	setup || echo -e "${RED}Error: running setup${NC}"
 
-    # perform destruction
-    destroy || echo -e "${RED} Error: running destroy${NC}"
+	execute-test "$1" "$2"
+
+	# perform destruction
+	destroy || echo -e "${RED} Error: running destroy${NC}"
 }
 
-function reset {
-        if [[ -d ".shunit" ]]; then
-                rm -rf .shunit
-        fi
-        mkdir .shunit
-        touch .shunit/pass
-        touch .shunit/error
-
-
+function reset() {
+	if [[ -d ".shunit" ]]; then
+		rm -rf .shunit
+	fi
+	mkdir .shunit
+	touch .shunit/pass
+	touch .shunit/error
 }
 
 # $1 is the path to shUnit
-function iterate {
-    reset
-    for unit in **/*.shUnit; do
-        if [[ -f "$unit" ]]; then
-           echo -e "$BLUE Running unit: $NC$unit"
-           "$1" -r "$unit"
-           echo -e "$BLUE--------------------------------------------------------$NC"
-        fi
-    done 
-    pass=$(wc -l .shunit/pass | awk '{print $1}')
-    error=$(wc -l .shunit/error | awk '{print $1}')
-    echo "Pass: $pass, Errors: $error"
-    if [[ "$error" -gt "0" ]]; then
-            exit 1
-    fi
+function iterate() {
+	reset
+	start || echo -e "${RED}Error: running startup${NC}"
+	for unit in **/*.shUnit; do
+		if [[ -f "$unit" ]]; then
+			echo -e "$BLUE Running unit: $NC$unit"
+			"$1" -r "$unit"
+			echo -e "$BLUE--------------------------------------------------------$NC"
+		fi
+	done
+	stop || echo -e "${RED}Error: running stop function${NC}"
+	pass=$(wc -l .shunit/pass | awk '{print $1}')
+	error=$(wc -l .shunit/error | awk '{print $1}')
+	echo "Pass: $pass, Errors: $error"
+	if [[ "$error" -gt "0" ]]; then
+		exit 1
+	fi
 }
 
-
 if [[ "$1" == "-r" ]]; then
-        run-unit "$0" "$2"
+	run-unit "$0" "$2"
 elif [[ "$1" == "-f" ]]; then
-        run-function "$2" "$3"
+	run-function "$2" "$3"
 elif [[ "$1" == "-v" ]]; then
-        echo $version
-        exit 0
+	echo $version
+	exit 0
+elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+	help
 else
-        iterate "$0"
+	if [[ -f "$1" ]]; then
+		source "$1"
+	fi
+	iterate "$0"
 fi
-
