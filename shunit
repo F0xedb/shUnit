@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Build and maintained by Tom Meyers
-# Contact email- tom@pbfp.team
+# Contact email- tom@odex.be
 # Contact github - F0xedb
 
-version="v0.1.0"
+version="v0.1.1"
 
 # color information
 RED='\033[0;31m'
@@ -21,6 +21,17 @@ source "$directory"assert.sh
 shopt -s globstar
 trap "destroyTest && destory" SIGHUP
 
+# Help info
+
+function help {
+    printf "${BLUE}%s${NC} options -> -h | -v | .sh\n" "$name"
+    printf "${BLUE}USAGE:${NC}\n"
+    printf "%s -v \t\t\t\tPrint the current version\n" "$name"
+    printf "%s (-h --help) \t\t\tPrint this help menu\n" "$name"
+    printf "%s <shell script> \t\t\tSource a shell script before and after all tests have ran. function start and stop will be called. \n" "$name"
+
+}
+
 # default behaviour of special functions
 function setup {
     return 0
@@ -32,6 +43,12 @@ function setupTest {
     return 0
 }
 function destroyTest {
+    return 0
+}
+function start {
+    return 0
+}
+function stop {
     return 0
 }
 
@@ -80,13 +97,12 @@ function reset {
         mkdir .shunit
         touch .shunit/pass
         touch .shunit/error
-
-
 }
 
 # $1 is the path to shUnit
 function iterate {
     reset
+    start || echo -e "${RED}Error: running startup${NC}"
     for unit in **/*.shUnit; do
         if [[ -f "$unit" ]]; then
            echo -e "$BLUE Running unit: $NC$unit"
@@ -94,6 +110,7 @@ function iterate {
            echo -e "$BLUE--------------------------------------------------------$NC"
         fi
     done 
+    stop || echo -e "${RED}Error: running stop function${NC}"
     pass=$(wc -l .shunit/pass | awk '{print $1}')
     error=$(wc -l .shunit/error | awk '{print $1}')
     echo "Pass: $pass, Errors: $error"
@@ -110,7 +127,12 @@ elif [[ "$1" == "-f" ]]; then
 elif [[ "$1" == "-v" ]]; then
         echo $version
         exit 0
+elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+       help 
 else
+        if [[ -f "$1" ]]; then
+                source "$1"
+        fi
         iterate "$0"
 fi
 
