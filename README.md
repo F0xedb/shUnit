@@ -66,7 +66,7 @@ All you need is a compatible shell eg bash
  
 1. Clone the shUnit repo
 ```sh
-git clone https:://github.com/F0xedb/shUnit.git
+git clone https://github.com/F0xedb/shUnit.git
 ```
 
 copy shunit and assert.sh to your path.
@@ -218,7 +218,7 @@ Distributed under the GPL License. See `LICENSE` for more information.
 
 ## Contact
 
-F0xedb - tom@pbfp.team
+F0xedb - tom@odex.be
 
 Project Link: [https://github.com/F0xedb/shUnit](https://github.com/F0xedb/shUnit)
 
